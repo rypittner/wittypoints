@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WittyTracker</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: white;
+      color: black;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: white;
+      padding: 0.3em 1em 0.5em 1em;
+      color: black;
+      text-align: center;
+      user-select: none;
+      font-weight: bold;
+      font-size: 2.5em;
+      border-bottom: 1px solid #ddd;
+      flex-shrink: 0;
+      margin: 0;
+    }
+
+#logoutBtn {
+  position: fixed;
+  top: 0.5em;
+  left: 1em;
+  background: transparent;
+  border: none;
+  color: #888888;      /* lighter gray */
+  font-weight: 400;    /* normal weight */
+  font-size: 1em;
+  cursor: pointer;
+  user-select: none;
+  z-index: 1000;
+  letter-spacing: 0;
+  padding: 0;
+}
+#logoutBtn:hover {
+  text-decoration: underline;
+  color: #555555; /* slightly darker on hover */
+}
+
+
+    #addUserBtn, #resetDataBtn {
+      position: fixed;
+      top: 0.5em;
+      font-size: 2em;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 1000;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: background-color 0.2s ease;
+      display: none; /* shown only for admin */
+    }
+    #addUserBtn:hover, #resetDataBtn:hover {
+      background: #555;
+    }
+    #addUserBtn {
+      right: 1em;
+    }
+    #resetDataBtn {
+      right: 65px;
+      font-size: 1.2em;
+      border-radius: 12px;
+      width: auto;
+      height: 32px;
+      padding: 0 10px;
+      font-weight: normal;
+      font-size: 1em;
+      text-transform: none;
+      border-radius: 6px;
+      line-height: normal;
+      color: white;
+      display: none;
+      user-select: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    #login, #adminLogin {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      padding: 1em;
+      background: white;
+      color: black;
+      z-index: 10000;
+      position: relative;
+    }
+
+    #login input, #adminLogin input {
+      font-size: 1em;
+      padding: 0.5em;
+      margin: 0.5em 0;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
+    }
+
+    #app {
+      display: none;
+      flex: 1 1 auto;
+      flex-direction: column;
+      padding: 4em 1em 0 1em;
+      color: black;
+      width: 100vw;
+      box-sizing: border-box;
+      overflow-y: auto;
+      min-height: calc(100vh - 100px);
+      display: flex;
+    }
+
+    #userList {
+      flex-grow: 1;
+      overflow-y: auto;
+      margin-bottom: 0;
+      max-width: 100%;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: white;
+      padding: 0.5em 1em;
+      margin-bottom: 0.5em;
+      border-radius: 8px;
+      flex-wrap: nowrap;
+      gap: 1em;
+      border: 1px solid #ddd;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .user span {
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .score-badge {
+      background: #e0e0e0;
+      color: #555;
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+      font-size: 0.9em;
+      margin-left: 0.5em;
+      min-width: 32px;
+      text-align: center;
+      font-family: monospace;
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5em;
+      flex-shrink: 0;
+    }
+
+    .controls button {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      color: white;
+      font-size: 1.2em;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+
+    .controls button.plus {
+      background-color: #28a745;
+    }
+
+    .controls button.plus:hover {
+      background-color: #218838;
+    }
+
+    .controls button.minus {
+      background-color: #dc3545;
+    }
+
+    .controls button.minus:hover {
+      background-color: #c82333;
+    }
+
+    #feedBox {
+      position: fixed;
+      top: 66vh;
+      left: 0;
+      width: 100vw;
+      background: #f9f9f9;
+      border-top: 1px solid #ccc;
+      padding: 0.75em 1em;
+      font-size: 0.9em;
+      max-height: 34vh;
+      overflow-y: auto;
+      box-sizing: border-box;
+      user-select: none;
+      line-height: 2.2; /* increased line height */
+      color: black;
+      white-space: normal;
+      box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
+      z-index: 500;
+      font-family: monospace;
+      display: none; /* hidden on login */
+    }
+
+    .feed-entry time {
+      background: #eee;
+      color: gray;
+      font-size: 0.75em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 1.2em; /* more space after timestamp */
+      text-transform: uppercase;
+      letter-spacing: 0;
+      display: inline-block;
+      flex-shrink: 0;
+      user-select: none;
+      font-family: monospace;
+    }
+
+    .feed-entry {
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      margin-bottom: 0.75em; /* spacing between feed lines */
+    }
+
+    .feed-entry.gain {
+      color: #228B22; /* forest green */
+    }
+    .feed-entry.loss {
+      color: #b22222; /* firebrick red */
+    }
+
+    @media (max-width: 600px) {
+      #app {
+        padding: 5.5em 1em 0 1em;
+      }
+      #logoutBtn {
+        font-size: 0.9em;
+        top: 1em;
+        left: 0.75em;
+      }
+      #addUserBtn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5em;
+        top: 1em;
+        right: 0.75em;
+      }
+      #resetDataBtn {
+        right: 50px;
+        height: 28px;
+        font-size: 0.9em;
+        top: 1.1em;
+        padding: 0 8px;
+      }
+      #feedBox {
+        max-height: 35vh;
+        font-size: 0.85em;
+        padding: 0.5em 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Normal user login -->
+  <div id="login">
+    <h2 style="color:black;">Enter your name to log in</h2>
+    <input type="text" id="usernameInput" placeholder="Your name" />
+    <button onclick="login()">Login</button>
+    <p style="margin-top:1em; font-size:0.9em; color:#555;">Admin? <button onclick="showAdminLogin()" style="cursor:pointer;">Login here</button></p>
+  </div>
+
+  <!-- Admin login -->
+  <div id="adminLogin" style="display:none;">
+    <h2 style="color:black;">Admin Login</h2>
+    <input type="text" id="adminUserInput" placeholder="Username" autocomplete="username" />
+    <input type="password" id="adminPassInput" placeholder="Password" autocomplete="current-password" />
+    <button onclick="adminLogin()">Login</button>
+    <p style="margin-top:1em; font-size:0.9em; color:#555;">Not admin? <button onclick="showUserLogin()" style="cursor:pointer;">User login here</button></p>
+  </div>
+
+  <button id="logoutBtn" style="display:none;" onclick="logout()"></button>
+  <button id="addUserBtn" title="Add User" onclick="addUserPrompt()">+</button>
+  <button id="resetDataBtn" title="Reset All Data" onclick="resetData()">Reset Data</button>
+
+  <div id="app">
+    <header>WittyTracker</header>
+    <div id="userList"></div>
+  </div>
+
+  <div id="feedBox">
+    <div id="feedEntries"></div>
+  </div>
+
+<script>
+  let currentUser = '';
+  let isAdmin = false;
+  let users = [];
+  let feed = [];
+
+  function showAdminLogin() {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('adminLogin').style.display = 'flex';
+    document.getElementById('feedBox').style.display = 'none';
+  }
+
+  function showUserLogin() {
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('login').style.display = 'flex';
+    document.getElementById('feedBox').style.display = 'none';
+  }
+
+  function login() {
+    const input = document.getElementById('usernameInput');
+    const name = input.value.trim();
+    if (!name) return alert('Please enter your name');
+    currentUser = name;
+    isAdmin = false;
+    localStorage.setItem('wittyUser', currentUser);
+    localStorage.setItem('wittyAdmin', 'false');
+    afterLogin();
+  }
+
+  function adminLogin() {
+    const username = document.getElementById('adminUserInput').value.trim();
+    const password = document.getElementById('adminPassInput').value;
+    if (username === 'admin' && password === 'admin') {
+      currentUser = 'admin';
+      isAdmin = true;
+      localStorage.setItem('wittyUser', currentUser);
+      localStorage.setItem('wittyAdmin', 'true');
+      afterLogin();
+    } else {
+      alert('Invalid admin credentials');
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem('wittyUser');
+    localStorage.removeItem('wittyAdmin');
+    currentUser = '';
+    isAdmin = false;
+    document.getElementById('logoutBtn').style.display = 'none';
+    document.getElementById('addUserBtn').style.display = 'none';
+    document.getElementById('resetDataBtn').style.display = 'none';
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('feedBox').style.display = 'none';
+    document.getElementById('feedEntries').innerHTML = '';
+    showUserLogin();
+  }
+
+  function afterLogin() {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('adminLogin').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    updateLogoutBtn();
+    updateAddUserBtn();
+    fetchUsers();
+    document.getElementById('feedBox').style.display = 'block';
+  }
+
+  function updateLogoutBtn() {
+    const btn = document.getElementById('logoutBtn');
+    btn.style.display = 'block';
+    btn.textContent = `Logout (${currentUser.toUpperCase()})`;
+  }
+
+  function updateAddUserBtn() {
+    const addBtn = document.getElementById('addUserBtn');
+    const resetBtn = document.getElementById('resetDataBtn');
+    if (isAdmin) {
+      addBtn.style.display = 'flex';
+      addBtn.textContent = '+';
+      resetBtn.style.display = 'inline-block';
+    } else {
+      addBtn.style.display = 'none';
+      resetBtn.style.display = 'none';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedUser = localStorage.getItem('wittyUser');
+    const savedAdmin = localStorage.getItem('wittyAdmin');
+    if (savedUser) {
+      currentUser = savedUser;
+      isAdmin = savedAdmin === 'true';
+      afterLogin();
+    } else {
+      showUserLogin();
+    }
+  });
+
+  async function fetchUsers() {
+    try {
+      const res = await fetch('https://api.jsonbin.io/v3/b/688708ebf7e7a370d1ef04a5/latest', {
+        headers: {
+          'X-Master-Key': '$2a$10$uWA6RwV4hxUT6D49HU56VuPjVsoNcHcTmf.jSgx.o6RXd2G1wGyse'
+        }
+      });
+      const data = await res.json();
+      users = data.record.users || [];
+      feed = data.record.feed || [];
+      render();
+    } catch (e) {
+      alert('Error loading data, starting fresh.');
+      users = [];
+      feed = [];
+      render();
+    }
+  }
+
+  async function saveUsers() {
+    try {
+      await fetch('https://api.jsonbin.io/v3/b/688708ebf7e7a370d1ef04a5', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Master-Key': '$2a$10$uWA6RwV4hxUT6D49HU56VuPjVsoNcHcTmf.jSgx.o6RXd2G1wGyse'
+        },
+        body: JSON.stringify({ users, feed })
+      });
+    } catch(e) {
+      alert('Error saving data');
+    }
+  }
+
+  function render() {
+    users.sort((a, b) => b.points - a.points);
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+    for (const user of users) {
+      const div = document.createElement('div');
+      div.className = 'user';
+
+      let controlsHtml = `
+        <button class="plus" onclick="promptChange('${user.name}', 1)" title="Add points">+</button>
+        <button class="minus" onclick="promptChange('${user.name}', -1)" title="Subtract points">−</button>
+      `;
+
+      div.innerHTML = `
+        <span>${user.name}<span class="score-badge">${user.points}</span></span>
+        <div class="controls">${controlsHtml}</div>
+      `;
+      userList.appendChild(div);
+    }
+    renderFeed();
+  }
+
+  function promptChange(name, direction) {
+    const action = direction > 0 ? 'add' : 'subtract';
+    const amount = parseInt(prompt(`How many points to ${action} for ${name}?`));
+    if (!isNaN(amount) && amount > 0) {
+      modifyPoints(name, direction * amount);
+    }
+  }
+
+  function modifyPoints(name, change) {
+    const user = users.find(u => u.name === name);
+    if (user) {
+      user.points += change;
+      const now = formatDate(new Date());
+      feed.unshift({
+        timestamp: now,
+        entry: `${currentUser} gave ${name} ${change > 0 ? '+' + change : change} witty points.`,
+        change: change
+      });
+      // Keep feed max length reasonable
+      if(feed.length > 100) feed.length = 100;
+      saveUsers();
+      render();
+    }
+  }
+
+  function formatDate(date) {
+    const options = { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
+  }
+
+  function addUserPrompt() {
+    if (!isAdmin) {
+      alert('Only admin can add users.');
+      return;
+    }
+    const name = prompt('Enter the name of the new person:');
+    if (name) {
+      const trimmed = name.trim();
+      if (trimmed.length === 0) return alert('Name cannot be empty.');
+      if (users.some(u => u.name.toLowerCase() === trimmed.toLowerCase())) {
+        alert('User already exists.');
+        return;
+      }
+      let pointsInput = prompt(`Enter initial points for ${trimmed} (default 0):`);
+      let initialPoints = parseInt(pointsInput);
+      if (isNaN(initialPoints)) initialPoints = 0;
+      users.push({ name: trimmed, points: initialPoints });
+      // Do NOT add to feed for new user points
+      saveUsers();
+      render();
+    }
+  }
+
+  function resetData() {
+    if (!isAdmin) return alert('Only admin can reset data.');
+    if (confirm('Are you sure you want to RESET ALL DATA? This cannot be undone.')) {
+      users = [];
+      feed = [];
+      saveUsers();
+      render();
+    }
+  }
+
+  function renderFeed() {
+    const feedEntries = document.getElementById('feedEntries');
+    feedEntries.innerHTML = '';
+    const maxEntries = 5;
+    let entriesToShow = feed.slice(0, maxEntries);
+
+    for (const entry of entriesToShow) {
+      const div = document.createElement('div');      div.className = 'feed-entry ' + (entry.change > 0 ? 'gain' : (entry.change < 0 ? 'loss' : ''));
+      div.innerHTML = `<time>${entry.timestamp}</time><span>${entry.entry}</span>`;
+      feedEntries.appendChild(div);
+    }
+
+    if (feed.length > maxEntries) {
+      const moreDiv = document.createElement('div');
+      moreDiv.className = 'feed-entry';
+      moreDiv.style.justifyContent = 'center';
+      moreDiv.style.fontStyle = 'italic';
+      moreDiv.style.color = '#666';
+      moreDiv.textContent = '...';
+      feedEntries.appendChild(moreDiv);
+    }
+  }
+</script>
+
+</body>
+</html>
