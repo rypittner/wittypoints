@@ -33,7 +33,7 @@
     }
     #logoutBtn {
       position: fixed;
-      top: 0.5em;
+      bottom: 1em;
       left: 1em;
       background: #eee;
       border: none;
@@ -42,13 +42,34 @@
       font-size: 1em;
       cursor: pointer;
       user-select: none;
-      z-index: 1000;
+      z-index: 1100;
       letter-spacing: 0;
       padding: 10px;
       border-radius:10px;
       font-family: 'Inter', sans-serif;
     }
     #logoutBtn:hover {
+      color: #FFFFFF;
+      background: #1D4654;
+    }
+    #feedToggleBtn {
+      position: fixed;
+      bottom: 1em;
+      right: 1em;
+      background: #eee;
+      border: none;
+      color: gray;      
+      font-weight: 400;    
+      font-size: 1em;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1100;
+      letter-spacing: 0;
+      padding: 10px;
+      border-radius:10px;
+      font-family: 'Inter', sans-serif;
+    }
+    #feedToggleBtn:hover {
       color: #FFFFFF;
       background: #1D4654;
     }
@@ -71,7 +92,6 @@
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       transition: background-color 0.2s ease;
-      display: none;
       font-family: 'Inter', sans-serif;
     }
     #addUserBtn:hover, #resetDataBtn:hover {
@@ -96,10 +116,12 @@
       border-radius: 6px;
       line-height: normal;
       color: white;
-      display: none;
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       font-family: 'Inter', sans-serif;
+    }
+    #resetDataBtn:hover {
+      background: #555;
     }
     #login, #adminLogin {
       display: flex;
@@ -122,11 +144,10 @@
     font-size:15px;
     border-radius:10px;}
     
-      button:hover {
+    button:hover {
       color: #FFFFFF;
       background: #1D4654;
     }
-    
     
     #login input, #adminLogin input {
       font-size: 1em;
@@ -141,7 +162,7 @@
       display: none;
       flex: 1 1 auto;
       flex-direction: column;
-      padding: 4em 1em 0 1em;
+      padding: 4em 1em 4em 1em; /* padding bottom for bottom buttons */
       color: black;
       width: 100vw;
       box-sizing: border-box;
@@ -177,24 +198,34 @@
       display: flex;
       align-items: center;
     }
-.score-badge {
-  background: #FFFBAB;
-  color: #F5A52F;
-  padding: 0.2em 0.6em;
-  border-radius: 999px;
-  font-size: 1em;
-  min-width: 32px;
-  text-align: center;
-  font-family: "Inter";
-  margin-right: 0.6em; /* space between score and name */
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-name {
-  display: inline-block;
-}
+    .score-badge {
+      padding: 0.2em 0.6em;
+      border-radius: 999px;
+      font-size: 1em;
+      min-width: 32px;
+      text-align: center;
+      font-family: "Inter";
+      margin-right: 0.6em; /* space between score and name */
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+    }
+    .score-positive {
+      background: #d4f4dd; /* light green */
+      color: #2f6627; /* dark green */
+    }
+    .score-negative {
+      background: #f8d7da; /* light red */
+      color: #842029; /* dark red */
+    }
+    .score-zero {
+      background: #e2e3e5; /* light gray */
+      color: #6c757d; /* dark gray */
+    }
+    .user-name {
+      display: inline-block;
+    }
     .controls {
       display: flex;
       gap: 0.5em;
@@ -215,6 +246,8 @@
       user-select: none;
       transition: background-color 0.2s ease;
       font-family: 'Inter', sans-serif;
+      padding: 0;
+      text-align: center;
     }
     .controls button.plus {
       background-color: #28a745;
@@ -228,7 +261,7 @@
     .controls button.minus:hover {
       background-color: #c82333;
     }
-    /* New admin buttons: edit & delete */
+    /* Admin buttons: edit name, edit score & delete */
     .controls button.edit {
       background-color: #007bff;
       border-radius: 6px;
@@ -238,6 +271,8 @@
       padding: 0;
       line-height: 1;
       justify-content: center;
+      color: white;
+      cursor: pointer;
     }
     .controls button.edit:hover {
       background-color: #0056b3;
@@ -251,30 +286,66 @@
       padding: 0;
       line-height: 1;
       justify-content: center;
+      color: white;
+      cursor: pointer;
     }
     .controls button.delete:hover {
       background-color: #a71d2a;
     }
-    #feedBox {
+
+    #feedOverlay {
       position: fixed;
-      top: 66vh;
-      left: 0;
+      top: 0; left: 0;
       width: 100vw;
+      height: 100vh;
       background: #f9f9f9;
-      border-top: 1px solid #ccc;
-      padding: 0.75em 1em;
-      font-size: 0.9em;
-      max-height: 34vh;
-      overflow-y: auto;
-      box-sizing: border-box;
-      user-select: none;
-      line-height: 2.2;
-      color: black;
-      white-space: normal;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
-      z-index: 500;
-      font-family: 'Inter', sans-serif;
+      z-index: 1200;
       display: none;
+      flex-direction: column;
+      font-family: 'Inter', sans-serif;
+      color: black;
+      overflow-y: auto;
+      padding: 1em 1.5em 4em 1.5em;
+      box-sizing: border-box;
+    }
+    #feedOverlay header {
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 0.5em;
+      text-align: center;
+      user-select: none;
+      position: relative;
+    }
+    #feedCloseBtn {
+      position: absolute;
+      top: 50%;
+      right: 0.5em;
+      transform: translateY(-50%);
+      background: #ccc;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.2em;
+      width: 36px;
+      height: 36px;
+      cursor: pointer;
+      user-select: none;
+      color: black;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #feedCloseBtn:hover {
+      background: #999;
+      color: white;
+    }
+    #feedEntries {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      font-size: 1em;
+      line-height: 1.6;
+      user-select: none;
     }
     .feed-entry time {
       background: #eee;
@@ -289,14 +360,13 @@
       flex-shrink: 0;
       user-select: none;
       font-family: "Inter";
-      font-weight:500;
+      font-weight: 500;
     }
     .feed-entry {
       display: flex;
       align-items: center;
       white-space: nowrap;
       margin-bottom: 0.75em;
-      font-family: 'Inter', sans-serif;
     }
     .feed-entry.gain {
       color: #228B22;
@@ -304,14 +374,58 @@
     .feed-entry.loss {
       color: #b22222;
     }
+    #feedClearBtn {
+      margin-top: 1em;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.5em 1em;
+      font-size: 1em;
+      cursor: pointer;
+      user-select: none;
+      display: none;
+    }
+    #feedClearBtn:hover {
+      background: #a71d2a;
+    }
+
+    #notificationPopup {
+      position: fixed;
+      bottom: 4.5em;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 0.8em 1.2em;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 1em;
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+      transition: opacity 0.3s ease;
+      z-index: 1300;
+      max-width: 90vw;
+      text-align: center;
+      white-space: nowrap;
+    }
+    
+    
+
     @media (max-width: 600px) {
       #app {
-        padding: 5.5em 1em 0 1em;
+        padding: 5.5em 1em 5.5em 1em;
       }
       #logoutBtn {
         font-size: 0.9em;
-        top: 1em;
+        bottom: 1em;
         left: 0.75em;
+      }
+      #feedToggleBtn {
+        font-size: 0.9em;
+        bottom: 1em;
+        right: 0.75em;
       }
       #addUserBtn {
         width: 40px;
@@ -327,10 +441,8 @@
         top: 1.1em;
         padding: 0 8px;
       }
-      #feedBox {
-        max-height: 35vh;
-        font-size: 0.85em;
-        padding: 0.5em 1em;
+      #feedOverlay {
+        padding: 1em 1em 4em 1em;
       }
     }
   </style>
@@ -354,40 +466,49 @@
     <p style="margin-top:1em; font-size:0.9em; color:#555;">Not admin? <button onclick="showUserLogin()" style="cursor:pointer;">User login here</button></p>
   </div>
 
-  <button id="logoutBtn" style="display:none;" onclick="logout()"></button>
-  <button id="addUserBtn" title="Add User" onclick="addUserPrompt()">+</button>
-  <button id="resetDataBtn" title="Reset All Data" onclick="resetData()">Reset Data</button>
-
   <div id="app">
     <header>WittyPoints</header>
     <div id="userList"></div>
   </div>
 
-  <div id="feedBox">
+  <button id="logoutBtn" style="display:none;" onclick="logout()"></button>
+  <button id="feedToggleBtn" style="display:none;" onclick="toggleFeed()">Feed</button>
+  <button id="addUserBtn" title="Add User" onclick="addUserPrompt()" style="display:none;">+</button>
+  <button id="resetDataBtn" title="Reset All Data" onclick="resetData()" style="display:none;">Reset Data</button>
+
+  <div id="feedOverlay">
+    <header>
+      Feed
+      <button id="feedCloseBtn" onclick="toggleFeed()">×</button>
+    </header>
     <div id="feedEntries"></div>
-    <!-- Clear feed button only for admin -->
-    <button id="clearFeedBtn" style="display:none; margin-top: 0.5em; padding: 0.3em 1em; font-family: 'Inter', sans-serif;" onclick="clearFeed()">Clear Feed</button>
+    <button id="feedClearBtn" onclick="clearFeed()">Clear Feed</button>
   </div>
 
-<script>
+  <div id="notificationPopup"></div>
+  
+  <script>
   let currentUser = '';
   let isAdmin = false;
   let users = [];
   let feed = [];
 
+  // For rapid clicks accumulation:
+  const clickCounters = {}; // { 'username+': count, 'username-': count }
+
   // *** PUT YOUR MOCKAPI BASE URL HERE ***
-  const API_BASE = 'https://68871a79071f195ca97f418a.mockapi.io/api/v1/';
+  const API_BASE = 'https://68871a79071f195ca97f418a.mockapi.io/api/v1';
 
   function showAdminLogin() {
     document.getElementById('login').style.display = 'none';
     document.getElementById('adminLogin').style.display = 'flex';
-    document.getElementById('feedBox').style.display = 'none';
+    hideFeedOverlay();
   }
 
   function showUserLogin() {
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('login').style.display = 'flex';
-    document.getElementById('feedBox').style.display = 'none';
+    hideFeedOverlay();
   }
 
   function login() {
@@ -423,9 +544,10 @@
     document.getElementById('logoutBtn').style.display = 'none';
     document.getElementById('addUserBtn').style.display = 'none';
     document.getElementById('resetDataBtn').style.display = 'none';
-    document.getElementById('clearFeedBtn').style.display = 'none';
+    document.getElementById('feedToggleBtn').style.display = 'none';
+    document.getElementById('feedClearBtn').style.display = 'none';
     document.getElementById('app').style.display = 'none';
-    document.getElementById('feedBox').style.display = 'none';
+    hideFeedOverlay();
     document.getElementById('feedEntries').innerHTML = '';
     showUserLogin();
   }
@@ -434,319 +556,407 @@
     document.getElementById('login').style.display = 'none';
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
-    updateLogoutBtn();
-    updateAddUserBtn();
-    updateResetBtn();
-    updateClearFeedBtn();
-    fetchUsers();
-    document.getElementById('feedBox').style.display = 'block';
-  }
+    document.getElementById('logoutBtn').style.display = 'block';
+    document.getElementById('feedToggleBtn').style.display = 'block';
 
-  function updateLogoutBtn() {
-    const btn = document.getElementById('logoutBtn');
-    btn.style.display = 'block';
-    btn.textContent = `Logout (${currentUser.toUpperCase()})`;
-  }
-
-  function updateAddUserBtn() {
-    const addBtn = document.getElementById('addUserBtn');
     if (isAdmin) {
-      addBtn.style.display = 'flex';
-      addBtn.textContent = '+';
+      document.getElementById('logoutBtn').textContent = 'Logout (Admin)';
+      document.getElementById('addUserBtn').style.display = 'block';
+      document.getElementById('resetDataBtn').style.display = 'block';
+      document.getElementById('feedClearBtn').style.display = 'block';
     } else {
-      addBtn.style.display = 'none';
+      document.getElementById('logoutBtn').textContent = `Logout (${currentUser})`;
+      document.getElementById('addUserBtn').style.display = 'none';
+      document.getElementById('resetDataBtn').style.display = 'none';
+      document.getElementById('feedClearBtn').style.display = 'none';
     }
-  }
-  function updateResetBtn() {
-    const resetBtn = document.getElementById('resetDataBtn');
-    if (isAdmin) {
-      resetBtn.style.display = 'inline-block';
-    } else {
-      resetBtn.style.display = 'none';
-    }
-  }
-  function updateClearFeedBtn() {
-    const clearBtn = document.getElementById('clearFeedBtn');
-    if (isAdmin) {
-      clearBtn.style.display = 'inline-block';
-    } else {
-      clearBtn.style.display = 'none';
-    }
+
+    loadUsers();
+    loadFeed();
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const savedUser = localStorage.getItem('wittyUser');
-    const savedAdmin = localStorage.getItem('wittyAdmin');
-    if (savedUser) {
-      currentUser = savedUser;
-      isAdmin = savedAdmin === 'true';
-      afterLogin();
-    } else {
-      showUserLogin();
-    }
-  });
-
-  async function fetchUsers() {
+  async function loadUsers() {
     try {
-      // Fetch users and feed individually
-      users = await fetch(`${API_BASE}/users`).then(res => res.json());
-      feed = await fetch(`${API_BASE}/feed`).then(res => res.json());
-
-      // Sort feed by timestamp descending
-      feed.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-
-      render();
+      const res = await fetch(`${API_BASE}/users`);
+      users = await res.json();
+      renderUsers();
     } catch (e) {
-      alert('Error loading data, starting fresh.');
-      users = [];
-      feed = [];
-      render();
+      alert('Failed to load users');
     }
   }
 
-  async function modifyPoints(name, change) {
-    const user = users.find(u => u.name === name);
-    if (user) {
-      user.points += change;
-      const now = formatDate(new Date());
-      // Only add feed if done by general user
+  async function loadFeed() {
+    try {
+      const res = await fetch(`${API_BASE}/feed`);
+      feed = await res.json();
+      renderFeed();
+    } catch (e) {
+      alert('Failed to load feed');
+    }
+  }
+
+  function renderUsers() {
+    const container = document.getElementById('userList');
+    container.innerHTML = '';
+
+    // Sort users by descending score
+    users.sort((a,b) => b.score - a.score);
+
+    users.forEach(user => {
+      const userDiv = document.createElement('div');
+      userDiv.className = 'user';
+
+      // Score badge with color based on value
+      const scoreBadge = document.createElement('span');
+      scoreBadge.className = 'score-badge ';
+      if (user.score > 0) scoreBadge.classList.add('score-positive');
+      else if (user.score < 0) scoreBadge.classList.add('score-negative');
+      else scoreBadge.classList.add('score-zero');
+      scoreBadge.textContent = user.score;
+
+      // Name
+      const nameSpan = document.createElement('span');
+      nameSpan.className = 'user-name';
+      nameSpan.textContent = user.name;
+
+      const leftPart = document.createElement('span');
+      leftPart.style.display = 'flex';
+      leftPart.style.alignItems = 'center';
+      leftPart.appendChild(scoreBadge);
+      leftPart.appendChild(nameSpan);
+
+      userDiv.appendChild(leftPart);
+
+      // Controls container
+      const controls = document.createElement('div');
+      controls.className = 'controls';
+
       if (!isAdmin) {
-        const feedEntry = {
-          timestamp: now,
-          entry: `${currentUser} gave ${name} <strong>${change > 0 ? '+' + change : change}</strong> WittyPoints.`,
-          change: change
-        };
-        try {
-          await fetch(`${API_BASE}/users/${user.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user),
-          });
+        // Plus button
+        const plusBtn = document.createElement('button');
+        plusBtn.className = 'plus';
+        plusBtn.textContent = '+';
+        plusBtn.title = `Give point to ${user.name}`;
+        plusBtn.onclick = () => handleIncrement(user.id, '+', plusBtn);
+        controls.appendChild(plusBtn);
 
-          const res = await fetch(`${API_BASE}/feed`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(feedEntry),
-          });
-          const newFeedEntry = await res.json();
-
-          feed.unshift(newFeedEntry);
-          if (feed.length > 100) feed.length = 100;
-
-          render();
-        } catch (e) {
-          alert('Error saving data');
-        }
+        // Minus button
+        const minusBtn = document.createElement('button');
+        minusBtn.className = 'minus';
+        minusBtn.textContent = '−';
+        minusBtn.title = `Take point from ${user.name}`;
+        minusBtn.onclick = () => handleIncrement(user.id, '-', minusBtn);
+        controls.appendChild(minusBtn);
       } else {
-        // Admin changing points but no feed entry
-        try {
-          await fetch(`${API_BASE}/users/${user.id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user),
-          });
-          render();
-        } catch (e) {
-          alert('Error saving data');
-              }
-    }
-  }}
+        // Admin view - show edit (for name and score) and delete buttons only
 
-  function promptChange(name, direction) {
-    const action = direction > 0 ? 'add' : 'subtract';
-    const amount = parseInt(prompt(`How many points to ${action} for ${name}?`));
-    if (!isNaN(amount) && amount > 0) {
-      modifyPoints(name, direction * amount);
+        // Edit name button
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit';
+        editBtn.textContent = '✎';
+        editBtn.title = `Edit name of ${user.name}`;
+        editBtn.onclick = () => editUserPrompt(user);
+        controls.appendChild(editBtn);
+
+        // Edit score button
+        const editScoreBtn = document.createElement('button');
+        editScoreBtn.className = 'edit';
+        editScoreBtn.textContent = '#';
+        editScoreBtn.title = `Edit score of ${user.name}`;
+        editScoreBtn.style.marginLeft = '6px';
+        editScoreBtn.onclick = () => editScorePrompt(user);
+        controls.appendChild(editScoreBtn);
+
+        // Delete button
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete';
+        delBtn.textContent = '🗑';
+        delBtn.title = `Delete ${user.name}`;
+        delBtn.onclick = () => deleteUser(user.id);
+        controls.appendChild(delBtn);
+      }
+
+      userDiv.appendChild(controls);
+
+      container.appendChild(userDiv);
+    });
+  }
+
+  // Handle plus or minus click with count display then reset
+  function handleIncrement(userId, op, btn) {
+    const key = userId + op;
+    if (!clickCounters[key]) clickCounters[key] = 0;
+    clickCounters[key]++;
+    btn.textContent = clickCounters[key];
+
+    // Debounce: wait 700ms after last click before sending update
+    if (btn._timeout) clearTimeout(btn._timeout);
+    btn._timeout = setTimeout(() => {
+      applyScoreChange(userId, op, clickCounters[key]);
+      clickCounters[key] = 0;
+      btn.textContent = op;
+      btn._timeout = null;
+    }, 700);
+  }
+
+  async function applyScoreChange(userId, op, amount) {
+    // Find user locally for optimistic update
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+
+    // Calculate new score allowing negative
+    let newScore;
+    if (op === '+') {
+      newScore = user.score + amount;
+    } else {
+      newScore = user.score - amount;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: newScore })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      const updatedUser = await res.json();
+
+      // Update locally
+      user.score = updatedUser.score;
+      renderUsers();
+
+      // Add to feed
+      const feedEntry = {
+        userId: user.id,
+        userName: user.name,
+        change: (op === '+') ? amount : -amount,
+        timestamp: new Date().toISOString()
+      };
+      await addFeedEntry(feedEntry);
+      feed.push(feedEntry);
+      renderFeed();
+
+      showNotification(`${currentUser} gave <strong>${user.name}</strong> ${(op === '+') ? '+' : ''}${(op === '+') ? amount : -amount} WittyPoints.`);
+    } catch (e) {
+      alert('Failed to update score');
     }
   }
 
-  async function addUserPrompt() {
-    if (!isAdmin) {
-      alert('Only admin can add users.');
+  // Prompt admin to enter a new score for a user
+  function editScorePrompt(user) {
+    let newScoreStr = prompt(`Enter new score for ${user.name}:`, user.score);
+    if (newScoreStr === null) return; // Cancelled
+    newScoreStr = newScoreStr.trim();
+    if (!/^[-+]?\d+$/.test(newScoreStr)) {
+      alert('Please enter a valid integer.');
       return;
     }
-    const name = prompt('Enter the name of the new person:');
-    if (name) {
-      const trimmed = name.trim();
-      if (trimmed.length === 0) return alert('Name cannot be empty.');
-      if (users.some(u => u.name.toLowerCase() === trimmed.toLowerCase())) {
-        alert('User already exists.');
-        return;
-      }
-      let pointsInput = prompt(`Enter initial points for ${trimmed} (default 0):`);
-      let initialPoints = parseInt(pointsInput);
-      if (isNaN(initialPoints)) initialPoints = 0;
+    const newScore = parseInt(newScoreStr, 10);
+    updateUserScore(user.id, newScore);
+  }
 
-      try {
-        const res = await fetch(`${API_BASE}/users`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: trimmed, points: initialPoints }),
-        });
-        const newUser = await res.json();
-        users.push(newUser);
-        render();
-      } catch (e) {
-        alert('Error adding user');
+  async function updateUserScore(userId, newScore) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ score: newScore })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      const updatedUser = await res.json();
+
+      const user = users.find(u => u.id === userId);
+      if (!user) return;
+      const oldScore = user.score;
+      user.score = updatedUser.score;
+      renderUsers();
+
+      // Calculate the difference for feed
+      const diff = newScore - oldScore;
+      if (diff !== 0) {
+        const feedEntry = {
+          userId: user.id,
+          userName: user.name,
+          change: diff,
+          timestamp: new Date().toISOString()
+        };
+        await addFeedEntry(feedEntry);
+        feed.push(feedEntry);
+        renderFeed();
+
+        showNotification(`${currentUser} changed ${user.name}'s score by ${(diff > 0 ? '+' : '') + diff} WittyPoints.`);
       }
+    } catch (e) {
+      alert('Failed to update score');
     }
   }
 
-  async function resetData() {
-    if (!isAdmin) return alert('Only admin can reset data.');
-    if (!confirm('Are you sure you want to RESET ALL DATA? This cannot be undone.')) return;
-
+  async function addFeedEntry(entry) {
     try {
-      // Delete all users
-      for (const user of users) {
-        await fetch(`${API_BASE}/users/${user.id}`, { method: 'DELETE' });
-      }
-      // Delete all feed entries
-      for (const entry of feed) {
-        await fetch(`${API_BASE}/feed/${entry.id}`, { method: 'DELETE' });
-      }
-      users = [];
-      feed = [];
-      render();
+      await fetch(`${API_BASE}/feed`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(entry)
+      });
     } catch (e) {
-      alert('Error resetting data');
+      console.warn('Failed to add feed entry');
     }
+  }
+
+  function renderFeed() {
+    const container = document.getElementById('feedEntries');
+    container.innerHTML = '';
+    // Sort feed newest first
+    const sortedFeed = [...feed].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+    sortedFeed.forEach(entry => {
+      const div = document.createElement('div');
+      div.className = 'feed-entry ' + (entry.change > 0 ? 'gain' : 'loss');
+      const time = document.createElement('time');
+      // Format date as M/D h:mm AM/PM
+      const d = new Date(entry.timestamp);
+      const options = { month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+      time.textContent = d.toLocaleString(undefined, options);
+      div.appendChild(time);
+
+      const textSpan = document.createElement('span');
+      let changeText = entry.change > 0 ? `+${entry.change}` : `${entry.change}`;
+      // Build feed text: CurrentUser gave Name (bolded) +N WittyPoints
+      textSpan.innerHTML = `${currentUser} gave <strong>${entry.userName}</strong> ${changeText} WittyPoints.`;
+      div.appendChild(textSpan);
+      container.appendChild(div);
+    });
+  }
+
+  function toggleFeed() {
+    const overlay = document.getElementById('feedOverlay');
+    if (overlay.style.display === 'flex') {
+      overlay.style.display = 'none';
+    } else {
+      overlay.style.display = 'flex';
+    }
+  }
+  function hideFeedOverlay() {
+    document.getElementById('feedOverlay').style.display = 'none';
   }
 
   async function clearFeed() {
-    if (!isAdmin) return alert('Only admin can clear the feed.');
     if (!confirm('Are you sure you want to clear the feed? This cannot be undone.')) return;
-
     try {
+      // Delete all feed entries from API - MockAPI may not support batch deletes, so deleting one by one:
       for (const entry of feed) {
         await fetch(`${API_BASE}/feed/${entry.id}`, { method: 'DELETE' });
       }
       feed = [];
       renderFeed();
+      alert('Feed cleared');
     } catch (e) {
-      alert('Error clearing feed');
+      alert('Failed to clear feed');
     }
   }
 
-  // Admin edits score directly
-  async function editUserScore(name) {
-    if (!isAdmin) {
-      alert('Only admin can edit scores.');
-      return;
-    }
-    const user = users.find(u => u.name === name);
-    if (!user) return alert('User not found.');
+  function showNotification(message) {
+    const popup = document.getElementById('notificationPopup');
+    popup.innerHTML = message;
+    popup.style.opacity = '1';
+    popup.style.pointerEvents = 'auto';
 
-    let newScoreInput = prompt(`Enter new score for ${name}:`, user.points);
-    if (newScoreInput === null) return; // Cancelled
-    let newScore = parseInt(newScoreInput);
-    if (isNaN(newScore)) {
-      alert('Invalid number.');
-      return;
-    }
+    clearTimeout(popup._timeout);
+    popup._timeout = setTimeout(() => {
+      popup.style.opacity = '0';
+      popup.style.pointerEvents = 'none';
+    }, 2500);
+  }
 
-    user.points = newScore;
+  function addUserPrompt() {
+    const name = prompt('Enter new user name:');
+    if (!name) return;
+    addUser(name);
+  }
+
+  async function addUser(name) {
     try {
-      await fetch(`${API_BASE}/users/${user.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
+      const res = await fetch(`${API_BASE}/users`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name: name, score: 0})
       });
-      render();
+      if (!res.ok) throw new Error('Failed to add user');
+      const newUser = await res.json();
+      users.push(newUser);
+      renderUsers();
     } catch (e) {
-      alert('Error updating user score');
+      alert('Failed to add user');
     }
   }
 
-  // Admin deletes user
-  async function deleteUser(name) {
-    if (!isAdmin) {
-      alert('Only admin can delete users.');
-      return;
-    }
-    const user = users.find(u => u.name === name);
-    if (!user) return alert('User not found.');
+  function editUserPrompt(user) {
+    const newName = prompt('Edit user name:', user.name);
+    if (!newName || newName.trim() === '') return;
+    editUser(user.id, newName.trim());
+  }
 
-    if (!confirm(`Are you sure you want to delete user ${name}? This cannot be undone.`)) return;
+  async function editUser(userId, newName) {
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name: newName})
+      });
+      if (!res.ok) throw new Error('Failed to edit user');
+      const updatedUser = await res.json();
+      const idx = users.findIndex(u => u.id === userId);
+      if (idx >= 0) {
+        users[idx].name = updatedUser.name;
+        renderUsers();
+      }
+    } catch (e) {
+      alert('Failed to edit user');
+    }
+  }
+
+  async function deleteUser(userId) {
+    if (!confirm('Delete this user? This action cannot be undone.')) return;
+    try {
+      const res = await fetch(`${API_BASE}/users/${userId}`, { method: 'DELETE' });
+      if (!res.ok) throw new Error('Failed to delete user');
+      users = users.filter(u => u.id !== userId);
+      renderUsers();
+    } catch (e) {
+      alert('Failed to delete user');
+    }
+  }
+
+  async function resetData() {
+    if (!confirm('Reset ALL data (users and feed)? This cannot be undone.')) return;
 
     try {
-      await fetch(`${API_BASE}/users/${user.id}`, { method: 'DELETE' });
-      users = users.filter(u => u.id !== user.id);
-      render();
-    } catch (e) {
-      alert('Error deleting user');
-    }
-  }
-
-  function render() {
-    // Sort users by points descending
-    users.sort((a, b) => b.points - a.points);
-    const userList = document.getElementById('userList');
-    userList.innerHTML = '';
-
-    for (const user of users) {
-      const div = document.createElement('div');
-      div.className = 'user';
-
-      let controlsHtml = '';
-
-      if (isAdmin) {
-        // Admin sees edit and delete buttons only
-        controlsHtml = `
-          <button class="edit" title="Edit score" onclick="editUserScore('${user.name}')">✏️</button>
-          <button class="delete" title="Delete user" onclick="deleteUser('${user.name}')">🗑️</button>
-        `;
-      } else {
-        // Normal user sees plus and minus buttons
-        controlsHtml = `
-          <button class="plus" onclick="promptChange('${user.name}', 1)" title="Add points">+</button>
-          <button class="minus" onclick="promptChange('${user.name}', -1)" title="Subtract points">−</button>
-        `;
+      // Delete all users & feed entries one by one
+      for (const user of users) {
+        await fetch(`${API_BASE}/users/${user.id}`, { method: 'DELETE' });
       }
-
-      div.innerHTML = `
-<span><span class="score-badge">${user.points}</span><span class="user-name">&nbsp;&nbsp;${user.name}</span></span>
-  <div class="controls">${controlsHtml}</div>
-`;
-      userList.appendChild(div);
-    }
-    renderFeed();
-  }
-
-  function renderFeed() {
-    const feedEntries = document.getElementById('feedEntries');
-    feedEntries.innerHTML = '';
-    const maxEntries = 5;
-
-    // Filter feed to show only entries NOT created by admin (assuming currentUser in entry text is saved)
-    // Since feed entry has .entry string, and admin entries are never added, just display normally
-
-    let entriesToShow = feed.slice(0, maxEntries);
-
-    for (const entry of entriesToShow) {
-      const div = document.createElement('div');
-      div.className = 'feed-entry ' + (entry.change > 0 ? 'gain' : (entry.change < 0 ? 'loss' : ''));
-      // Insert the entry with bold inside, so use innerHTML
-      div.innerHTML = `<time>${entry.timestamp}</time><span>${entry.entry}</span>`;
-      feedEntries.appendChild(div);
-    }
-
-    if (feed.length > maxEntries) {
-      const moreDiv = document.createElement('div');
-      moreDiv.className = 'feed-entry';
-      moreDiv.style.justifyContent = 'center';
-      moreDiv.style.fontStyle = 'italic';
-      moreDiv.style.color = '#666';
-      moreDiv.textContent = '...';
-      feedEntries.appendChild(moreDiv);
+      for (const entry of feed) {
+        await fetch(`${API_BASE}/feed/${entry.id}`, { method: 'DELETE' });
+      }
+      users = [];
+      feed = [];
+      renderUsers();
+      renderFeed();
+      alert('All data reset');
+    } catch (e) {
+      alert('Failed to reset data');
     }
   }
 
-  function formatDate(date) {
-    const options = { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
-    return new Intl.DateTimeFormat('en-US', options).format(date);
-  }
+  // On page load, try to restore login
+  window.onload = () => {
+    const storedUser = localStorage.getItem('wittyUser');
+    const storedAdmin = localStorage.getItem('wittyAdmin');
+    if (storedUser) {
+      currentUser = storedUser;
+      isAdmin = storedAdmin === 'true';
+      afterLogin();
+    } else {
+      showUserLogin();
+    }
+  };
 </script>
-
-</body>
-</html>
