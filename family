@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WittyPoints</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+    }
+
+    header {
+      background: #f9f9f9;
+      padding: 15px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 24px;
+    }
+
+    #app {
+      background: #f9f9f9;
+    }
+
+    #userList {
+      padding: 15px;
+    }
+
+    div.user {
+      background: #FFFFFF;
+      border: none;
+      box-shadow: 0px 1px 5px #0000001a;
+      margin-bottom: 15px;
+      padding: 15px;
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    span.score-badge {
+      box-shadow: 0px 1px 10px #0000001a;
+      margin-right: 20px;
+      padding: 8px 12px;
+      border: solid;
+      border-width: 2px;
+      border-radius: 20px;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .score-badge.score-positive {
+      color: #81C985;
+    }
+
+    .score-badge.score-negative {
+      color: #DB5A5A;
+    }
+
+    span.user-name {
+      font-size: 16pt;
+      flex-grow: 1;
+    }
+
+    .score-buttons {
+      display: flex;
+      align-items: center;
+    }
+
+    .score-delta {
+      width: 40px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 14pt;
+      margin-right: 10px;
+    }
+
+    button {
+      box-shadow: 0px 1px 10px #0000001a;
+      border: none;
+      border-radius: 20px;
+      color: white;
+      font-size: 14pt;
+      padding: 6px 14px;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+
+    button.plus {
+      background-color: #81C985;
+    }
+
+    button.minus {
+      background-color: #DB5A5A;
+    }
+
+    #feedOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    #feedContent {
+      background: #fff;
+      color: #000;
+      padding: 20px;
+      border-radius: 15px;
+      max-height: 80vh;
+      overflow-y: auto;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    #closeFeedBtn {
+      margin-top: 20px;
+      font-size: 18px;
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    #notification {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #333;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 20px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      z-index: 1001;
+    }
+  </style>
+</head>
+<body>
+  <header>WittyPoints</header>
+  <div id="app">
+    <div id="userList"></div>
+    <div id="feedOverlay">
+      <div id="feedContent"></div>
+      <button id="closeFeedBtn">X Close</button>
+    </div>
+    <div id="notification"></div>
+  </div>
+<script>
+  const apiUrl = "https://68871a79071f195ca97f418a.mockapi.io/api/v1/users";
+
+  const app = document.getElementById("app");
+  const userList = document.getElementById("userList");
+  const feedOverlay = document.getElementById("feedOverlay");
+  const feedContent = document.getElementById("feedContent");
+  const closeFeedBtn = document.getElementById("closeFeedBtn");
+  const notification = document.getElementById("notification");
+
+  // Keeps track of buffered changes per user during rapid clicks
+  const bufferedChanges = {};
+  // Timers for debounce to commit changes
+  const updateTimers = {};
+
+  let users = []; // will load from API
+
+  // Helper to get score class
+  function getScoreClass(score) {
+    if (score > 0) return "score-positive";
+    if (score < 0) return "score-negative";
+    return "";
+  }
+
+  // Format delta text for display
+  function formatDelta(val) {
+    if (val > 0) return "+" + val;
+    if (val < 0) return "" + val;
+    return "";
+  }
+
+  // Render user list to DOM
+  function renderUsers() {
+    userList.innerHTML = "";
+    users.sort((a, b) => b.score - a.score);
+
+    users.forEach(user => {
+      const userDiv = document.createElement("div");
+      userDiv.className = "user";
+
+      const scoreSpan = document.createElement("span");
+      scoreSpan.className = "score-badge " + getScoreClass(user.score);
+      scoreSpan.textContent = user.score;
+
+      const nameSpan = document.createElement("span");
+      nameSpan.className = "user-name";
+      nameSpan.textContent = user.name;
+
+      const controlsDiv = document.createElement("div");
+      controlsDiv.className = "score-buttons";
+
+      const deltaSpan = document.createElement("span");
+      deltaSpan.className = "score-delta";
+      deltaSpan.textContent = bufferedChanges[user.name] ? formatDelta(bufferedChanges[user.name]) : "";
+
+      const plusBtn = document.createElement("button");
+      plusBtn.className = "plus";
+      plusBtn.textContent = "+";
+      plusBtn.onclick = () => bufferScoreChange(user.name, 1, deltaSpan, scoreSpan);
+
+      const minusBtn = document.createElement("button");
+      minusBtn.className = "minus";
+      minusBtn.textContent = "−";
+      minusBtn.onclick = () => bufferScoreChange(user.name, -1, deltaSpan, scoreSpan);
+
+      controlsDiv.appendChild(deltaSpan);
+      controlsDiv.appendChild(plusBtn);
+      controlsDiv.appendChild(minusBtn);
+
+      userDiv.appendChild(scoreSpan);
+      userDiv.appendChild(nameSpan);
+      userDiv.appendChild(controlsDiv);
+
+      userList.appendChild(userDiv);
+    });
+  }
+
+  // Buffer score changes during rapid clicks
+  function bufferScoreChange(userName, delta, deltaSpan, scoreSpan) {
+    if (!bufferedChanges[userName]) {
+      bufferedChanges[userName] = 0;
+    }
+    bufferedChanges[userName] += delta;
+
+    deltaSpan.textContent = formatDelta(bufferedChanges[userName]);
+
+    if (updateTimers[userName]) clearTimeout(updateTimers[userName]);
+
+    updateTimers[userName] = setTimeout(() => {
+      commitScoreChange(userName, deltaSpan, scoreSpan);
+    }, 800);
+  }
+
+  // Commit buffered score changes and update MockAPI
+  async function commitScoreChange(userName, deltaSpan, scoreSpan) {
+    const change = bufferedChanges[userName] || 0;
+    if (change !== 0) {
+      const user = users.find(u => u.name === userName);
+      if (user) {
+        user.score += change;
+
+        // Update user score in MockAPI
+        try {
+          await fetch(`${apiUrl}/${user.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ score: user.score })
+          });
+          showNotification(`${userName} got ${change > 0 ? "+" : ""}${change} points!`);
+        } catch (error) {
+          console.error("Error updating score:", error);
+          showNotification(`Failed to update score for ${userName}.`);
+          // Roll back score in UI to keep consistent
+          user.score -= change;
+        }
+      }
+    }
+    bufferedChanges[userName] = 0;
+    deltaSpan.textContent = "";
+    renderUsers();
+  }
+
+  // Show temporary notification
+  function showNotification(msg) {
+    notification.textContent = msg;
+    notification.style.opacity = "1";
+    setTimeout(() => {
+      notification.style.opacity = "0";
+    }, 2000);
+  }
+
+  closeFeedBtn.onclick = () => {
+    feedOverlay.style.display = "none";
+  };
+
+  // Load users from MockAPI and initialize app
+  async function loadUsers() {
+    try {
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+
+      // The API data should have id, name, and score fields
+      users = data.map(user => ({
+        id: user.id,
+        name: user.name,
+        score: Number(user.score) || 0
+      }));
+
+      renderUsers();
+    } catch (error) {
+      console.error("Error loading users:", error);
+      // Fallback: Use initial sample users if fetch fails
+      users = [
+        { id: "1", name: "Alice", score: 5 },
+        { id: "2", name: "Bob", score: 2 },
+        { id: "3", name: "Charlie", score: -1 }
+      ];
+      renderUsers();
+    }
+  }
+
+  // On page load, fetch users from API
+  loadUsers();
+
+</script>
+
+</body>
+</html>
