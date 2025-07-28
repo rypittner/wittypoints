@@ -173,23 +173,28 @@
     }
     .user span {
       font-weight: bold;
-      text-transform: uppercase;
-      letter-spacing: 1px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
     }
-    .score-badge {
-      background: #FFFBAB;
-      color: #F5A52F;
-      padding: 0.2em 0.6em;
-      border-radius: 999px;
-      font-size: 1em;
-      margin-left: 0.5em;
-      min-width: 32px;
-      text-align: center;
-      font-family: "Inter";
-    }
+.score-badge {
+  background: #FFFBAB;
+  color: #F5A52F;
+  padding: 0.2em 0.6em;
+  border-radius: 999px;
+  font-size: 1em;
+  min-width: 32px;
+  text-align: center;
+  font-family: "Inter";
+  margin-right: 0.6em; /* space between score and name */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  display: inline-block;
+}
     .controls {
       display: flex;
       gap: 0.5em;
@@ -700,9 +705,9 @@
       }
 
       div.innerHTML = `
-        <span>${user.name}<span class="score-badge">${user.points}</span></span>
-        <div class="controls">${controlsHtml}</div>
-      `;
+<span><span class="score-badge">${user.points}</span><span class="user-name">&nbsp;&nbsp;${user.name}</span></span>
+  <div class="controls">${controlsHtml}</div>
+`;
       userList.appendChild(div);
     }
     renderFeed();
