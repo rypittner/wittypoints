@@ -4,9 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>WittyPoints</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <style>
+
     body {
-      font-family: sans-serif;
+      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
       background: white;
@@ -16,41 +18,40 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
     header {
       background: white;
-      padding: 0.3em 1em 0.5em 1em;
+      padding-bottom:0.5em;
       color: black;
+      font-weight:600;
       text-align: center;
       user-select: none;
       font-weight: bold;
       font-size: 2.5em;
-      border-bottom: 1px solid #ddd;
       flex-shrink: 0;
       margin: 0;
+      font-family: 'Inter', sans-serif;
     }
-
-#logoutBtn {
-  position: fixed;
-  top: 0.5em;
-  left: 1em;
-  background: transparent;
-  border: none;
-  color: #888888;      /* lighter gray */
-  font-weight: 400;    /* normal weight */
-  font-size: 1em;
-  cursor: pointer;
-  user-select: none;
-  z-index: 1000;
-  letter-spacing: 0;
-  padding: 0;
-}
-#logoutBtn:hover {
-  text-decoration: underline;
-  color: #555555; /* slightly darker on hover */
-}
-
-
+    #logoutBtn {
+      position: fixed;
+      top: 0.5em;
+      left: 1em;
+      background: #eee;
+      border: none;
+      color: gray;      
+      font-weight: 400;    
+      font-size: 1em;
+      cursor: pointer;
+      user-select: none;
+      z-index: 1000;
+      letter-spacing: 0;
+      padding: 10px;
+      border-radius:10px;
+      font-family: 'Inter', sans-serif;
+    }
+    #logoutBtn:hover {
+      color: #FFFFFF;
+      background: #1D4654;
+    }
     #addUserBtn, #resetDataBtn {
       position: fixed;
       top: 0.5em;
@@ -70,18 +71,20 @@
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       transition: background-color 0.2s ease;
-      display: none; /* shown only for admin */
+      display: none;
+      font-family: 'Inter', sans-serif;
     }
     #addUserBtn:hover, #resetDataBtn:hover {
       background: #555;
     }
     #addUserBtn {
       right: 1em;
-            width: 50px;
+      width: 50px;
       height: 50px;
     }
     #resetDataBtn {
-      right: 65px;
+      right: 100px;
+      top:25px;
       font-size: 1.2em;
       border-radius: 12px;
       width: auto;
@@ -96,8 +99,8 @@
       display: none;
       user-select: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      font-family: 'Inter', sans-serif;
     }
-
     #login, #adminLogin {
       display: flex;
       flex-direction: column;
@@ -109,8 +112,22 @@
       color: black;
       z-index: 10000;
       position: relative;
+      font-family: 'Inter', sans-serif;
     }
-
+    
+    button {background:#eee;
+    font-family:"Inter";
+    border:none;
+    padding:8px 12px;
+    font-size:15px;
+    border-radius:10px;}
+    
+      button:hover {
+      color: #FFFFFF;
+      background: #1D4654;
+    }
+    
+    
     #login input, #adminLogin input {
       font-size: 1em;
       padding: 0.5em;
@@ -118,8 +135,8 @@
       width: 100%;
       max-width: 300px;
       box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
     }
-
     #app {
       display: none;
       flex: 1 1 auto;
@@ -131,15 +148,14 @@
       overflow-y: auto;
       min-height: calc(100vh - 100px);
       display: flex;
+      font-family: 'Inter', sans-serif;
     }
-
     #userList {
       flex-grow: 1;
       overflow-y: auto;
       margin-bottom: 0;
       max-width: 100%;
     }
-
     .user {
       display: flex;
       align-items: center;
@@ -153,8 +169,8 @@
       border: 1px solid #ddd;
       max-width: 100%;
       box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
     }
-
     .user span {
       font-weight: bold;
       text-transform: uppercase;
@@ -163,25 +179,22 @@
       display: flex;
       align-items: center;
     }
-
     .score-badge {
-      background: #e0e0e0;
-      color: #555;
+      background: #FFFBAB;
+      color: #F5A52F;
       padding: 0.2em 0.6em;
       border-radius: 999px;
-      font-size: 0.9em;
+      font-size: 1em;
       margin-left: 0.5em;
       min-width: 32px;
       text-align: center;
-      font-family: monospace;
+      font-family: "Inter";
     }
-
     .controls {
       display: flex;
       gap: 0.5em;
       flex-shrink: 0;
     }
-
     .controls button {
       width: 32px;
       height: 32px;
@@ -196,24 +209,47 @@
       cursor: pointer;
       user-select: none;
       transition: background-color 0.2s ease;
+      font-family: 'Inter', sans-serif;
     }
-
     .controls button.plus {
       background-color: #28a745;
     }
-
     .controls button.plus:hover {
       background-color: #218838;
     }
-
     .controls button.minus {
       background-color: #dc3545;
     }
-
     .controls button.minus:hover {
       background-color: #c82333;
     }
-
+    /* New admin buttons: edit & delete */
+    .controls button.edit {
+      background-color: #007bff;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      font-size: 1.1em;
+      padding: 0;
+      line-height: 1;
+      justify-content: center;
+    }
+    .controls button.edit:hover {
+      background-color: #0056b3;
+    }
+    .controls button.delete {
+      background-color: #dc3545;
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      font-size: 1.1em;
+      padding: 0;
+      line-height: 1;
+      justify-content: center;
+    }
+    .controls button.delete:hover {
+      background-color: #a71d2a;
+    }
     #feedBox {
       position: fixed;
       top: 66vh;
@@ -227,44 +263,42 @@
       overflow-y: auto;
       box-sizing: border-box;
       user-select: none;
-      line-height: 2.2; /* increased line height */
+      line-height: 2.2;
       color: black;
       white-space: normal;
       box-shadow: 0 -2px 6px rgba(0,0,0,0.05);
       z-index: 500;
-      font-family: monospace;
-      display: none; /* hidden on login */
+      font-family: 'Inter', sans-serif;
+      display: none;
     }
-
     .feed-entry time {
       background: #eee;
-      color: gray;
+      color: #0278A8;
       font-size: 0.75em;
       padding: 2px 6px;
       border-radius: 4px;
-      margin-right: 1.2em; /* more space after timestamp */
+      margin-right: 1.2em;
       text-transform: uppercase;
       letter-spacing: 0;
       display: inline-block;
       flex-shrink: 0;
       user-select: none;
-      font-family: monospace;
+      font-family: "Inter";
+      font-weight:500;
     }
-
     .feed-entry {
       display: flex;
       align-items: center;
       white-space: nowrap;
-      margin-bottom: 0.75em; /* spacing between feed lines */
+      margin-bottom: 0.75em;
+      font-family: 'Inter', sans-serif;
     }
-
     .feed-entry.gain {
-      color: #228B22; /* forest green */
+      color: #228B22;
     }
     .feed-entry.loss {
-      color: #b22222; /* firebrick red */
+      color: #b22222;
     }
-
     @media (max-width: 600px) {
       #app {
         padding: 5.5em 1em 0 1em;
@@ -326,6 +360,8 @@
 
   <div id="feedBox">
     <div id="feedEntries"></div>
+    <!-- Clear feed button only for admin -->
+    <button id="clearFeedBtn" style="display:none; margin-top: 0.5em; padding: 0.3em 1em; font-family: 'Inter', sans-serif;" onclick="clearFeed()">Clear Feed</button>
   </div>
 
 <script>
@@ -333,6 +369,9 @@
   let isAdmin = false;
   let users = [];
   let feed = [];
+
+  // *** PUT YOUR MOCKAPI BASE URL HERE ***
+  const API_BASE = 'https://68871a79071f195ca97f418a.mockapi.io/api/v1/';
 
   function showAdminLogin() {
     document.getElementById('login').style.display = 'none';
@@ -379,6 +418,7 @@
     document.getElementById('logoutBtn').style.display = 'none';
     document.getElementById('addUserBtn').style.display = 'none';
     document.getElementById('resetDataBtn').style.display = 'none';
+    document.getElementById('clearFeedBtn').style.display = 'none';
     document.getElementById('app').style.display = 'none';
     document.getElementById('feedBox').style.display = 'none';
     document.getElementById('feedEntries').innerHTML = '';
@@ -391,6 +431,8 @@
     document.getElementById('app').style.display = 'flex';
     updateLogoutBtn();
     updateAddUserBtn();
+    updateResetBtn();
+    updateClearFeedBtn();
     fetchUsers();
     document.getElementById('feedBox').style.display = 'block';
   }
@@ -403,14 +445,27 @@
 
   function updateAddUserBtn() {
     const addBtn = document.getElementById('addUserBtn');
-    const resetBtn = document.getElementById('resetDataBtn');
     if (isAdmin) {
       addBtn.style.display = 'flex';
       addBtn.textContent = '+';
-      resetBtn.style.display = 'inline-block';
     } else {
       addBtn.style.display = 'none';
+    }
+  }
+  function updateResetBtn() {
+    const resetBtn = document.getElementById('resetDataBtn');
+    if (isAdmin) {
+      resetBtn.style.display = 'inline-block';
+    } else {
       resetBtn.style.display = 'none';
+    }
+  }
+  function updateClearFeedBtn() {
+    const clearBtn = document.getElementById('clearFeedBtn');
+    if (isAdmin) {
+      clearBtn.style.display = 'inline-block';
+    } else {
+      clearBtn.style.display = 'none';
     }
   }
 
@@ -428,14 +483,13 @@
 
   async function fetchUsers() {
     try {
-      const res = await fetch('https://api.jsonbin.io/v3/b/688708ebf7e7a370d1ef04a5/latest', {
-        headers: {
-          'X-Master-Key': '$2a$10$uWA6RwV4hxUT6D49HU56VuPjVsoNcHcTmf.jSgx.o6RXd2G1wGyse'
-        }
-      });
-      const data = await res.json();
-      users = data.record.users || [];
-      feed = data.record.feed || [];
+      // Fetch users and feed individually
+      users = await fetch(`${API_BASE}/users`).then(res => res.json());
+      feed = await fetch(`${API_BASE}/feed`).then(res => res.json());
+
+      // Sort feed by timestamp descending
+      feed.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
       render();
     } catch (e) {
       alert('Error loading data, starting fresh.');
@@ -445,42 +499,53 @@
     }
   }
 
-  async function saveUsers() {
-    try {
-      await fetch('https://api.jsonbin.io/v3/b/688708ebf7e7a370d1ef04a5', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Master-Key': '$2a$10$uWA6RwV4hxUT6D49HU56VuPjVsoNcHcTmf.jSgx.o6RXd2G1wGyse'
-        },
-        body: JSON.stringify({ users, feed })
-      });
-    } catch(e) {
-      alert('Error saving data');
+  async function modifyPoints(name, change) {
+    const user = users.find(u => u.name === name);
+    if (user) {
+      user.points += change;
+      const now = formatDate(new Date());
+      // Only add feed if done by general user
+      if (!isAdmin) {
+        const feedEntry = {
+          timestamp: now,
+          entry: `${currentUser} gave ${name} <strong>${change > 0 ? '+' + change : change}</strong> witty points.`,
+          change: change
+        };
+        try {
+          await fetch(`${API_BASE}/users/${user.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+          });
+
+          const res = await fetch(`${API_BASE}/feed`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(feedEntry),
+          });
+          const newFeedEntry = await res.json();
+
+          feed.unshift(newFeedEntry);
+          if (feed.length > 100) feed.length = 100;
+
+          render();
+        } catch (e) {
+          alert('Error saving data');
+        }
+      } else {
+        // Admin changing points but no feed entry
+        try {
+          await fetch(`${API_BASE}/users/${user.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+          });
+          render();
+        } catch (e) {
+          alert('Error saving data');
+              }
     }
-  }
-
-  function render() {
-    users.sort((a, b) => b.points - a.points);
-    const userList = document.getElementById('userList');
-    userList.innerHTML = '';
-    for (const user of users) {
-      const div = document.createElement('div');
-      div.className = 'user';
-
-      let controlsHtml = `
-        <button class="plus" onclick="promptChange('${user.name}', 1)" title="Add points">+</button>
-        <button class="minus" onclick="promptChange('${user.name}', -1)" title="Subtract points">−</button>
-      `;
-
-      div.innerHTML = `
-        <span>${user.name}<span class="score-badge">${user.points}</span></span>
-        <div class="controls">${controlsHtml}</div>
-      `;
-      userList.appendChild(div);
-    }
-    renderFeed();
-  }
+  }}
 
   function promptChange(name, direction) {
     const action = direction > 0 ? 'add' : 'subtract';
@@ -490,29 +555,7 @@
     }
   }
 
-  function modifyPoints(name, change) {
-    const user = users.find(u => u.name === name);
-    if (user) {
-      user.points += change;
-      const now = formatDate(new Date());
-      feed.unshift({
-        timestamp: now,
-        entry: `${currentUser} gave ${name} ${change > 0 ? '+' + change : change} witty points.`,
-        change: change
-      });
-      // Keep feed max length reasonable
-      if(feed.length > 100) feed.length = 100;
-      saveUsers();
-      render();
-    }
-  }
-
-  function formatDate(date) {
-    const options = { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
-    return new Intl.DateTimeFormat('en-US', options).format(date);
-  }
-
-  function addUserPrompt() {
+  async function addUserPrompt() {
     if (!isAdmin) {
       alert('Only admin can add users.');
       return;
@@ -528,31 +571,157 @@
       let pointsInput = prompt(`Enter initial points for ${trimmed} (default 0):`);
       let initialPoints = parseInt(pointsInput);
       if (isNaN(initialPoints)) initialPoints = 0;
-      users.push({ name: trimmed, points: initialPoints });
-      // Do NOT add to feed for new user points
-      saveUsers();
-      render();
+
+      try {
+        const res = await fetch(`${API_BASE}/users`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: trimmed, points: initialPoints }),
+        });
+        const newUser = await res.json();
+        users.push(newUser);
+        render();
+      } catch (e) {
+        alert('Error adding user');
+      }
     }
   }
 
-  function resetData() {
+  async function resetData() {
     if (!isAdmin) return alert('Only admin can reset data.');
-    if (confirm('Are you sure you want to RESET ALL DATA? This cannot be undone.')) {
+    if (!confirm('Are you sure you want to RESET ALL DATA? This cannot be undone.')) return;
+
+    try {
+      // Delete all users
+      for (const user of users) {
+        await fetch(`${API_BASE}/users/${user.id}`, { method: 'DELETE' });
+      }
+      // Delete all feed entries
+      for (const entry of feed) {
+        await fetch(`${API_BASE}/feed/${entry.id}`, { method: 'DELETE' });
+      }
       users = [];
       feed = [];
-      saveUsers();
       render();
+    } catch (e) {
+      alert('Error resetting data');
     }
+  }
+
+  async function clearFeed() {
+    if (!isAdmin) return alert('Only admin can clear the feed.');
+    if (!confirm('Are you sure you want to clear the feed? This cannot be undone.')) return;
+
+    try {
+      for (const entry of feed) {
+        await fetch(`${API_BASE}/feed/${entry.id}`, { method: 'DELETE' });
+      }
+      feed = [];
+      renderFeed();
+    } catch (e) {
+      alert('Error clearing feed');
+    }
+  }
+
+  // Admin edits score directly
+  async function editUserScore(name) {
+    if (!isAdmin) {
+      alert('Only admin can edit scores.');
+      return;
+    }
+    const user = users.find(u => u.name === name);
+    if (!user) return alert('User not found.');
+
+    let newScoreInput = prompt(`Enter new score for ${name}:`, user.points);
+    if (newScoreInput === null) return; // Cancelled
+    let newScore = parseInt(newScoreInput);
+    if (isNaN(newScore)) {
+      alert('Invalid number.');
+      return;
+    }
+
+    user.points = newScore;
+    try {
+      await fetch(`${API_BASE}/users/${user.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(user),
+      });
+      render();
+    } catch (e) {
+      alert('Error updating user score');
+    }
+  }
+
+  // Admin deletes user
+  async function deleteUser(name) {
+    if (!isAdmin) {
+      alert('Only admin can delete users.');
+      return;
+    }
+    const user = users.find(u => u.name === name);
+    if (!user) return alert('User not found.');
+
+    if (!confirm(`Are you sure you want to delete user ${name}? This cannot be undone.`)) return;
+
+    try {
+      await fetch(`${API_BASE}/users/${user.id}`, { method: 'DELETE' });
+      users = users.filter(u => u.id !== user.id);
+      render();
+    } catch (e) {
+      alert('Error deleting user');
+    }
+  }
+
+  function render() {
+    // Sort users by points descending
+    users.sort((a, b) => b.points - a.points);
+    const userList = document.getElementById('userList');
+    userList.innerHTML = '';
+
+    for (const user of users) {
+      const div = document.createElement('div');
+      div.className = 'user';
+
+      let controlsHtml = '';
+
+      if (isAdmin) {
+        // Admin sees edit and delete buttons only
+        controlsHtml = `
+          <button class="edit" title="Edit score" onclick="editUserScore('${user.name}')">✏️</button>
+          <button class="delete" title="Delete user" onclick="deleteUser('${user.name}')">🗑️</button>
+        `;
+      } else {
+        // Normal user sees plus and minus buttons
+        controlsHtml = `
+          <button class="plus" onclick="promptChange('${user.name}', 1)" title="Add points">+</button>
+          <button class="minus" onclick="promptChange('${user.name}', -1)" title="Subtract points">−</button>
+        `;
+      }
+
+      div.innerHTML = `
+        <span>${user.name}<span class="score-badge">${user.points}</span></span>
+        <div class="controls">${controlsHtml}</div>
+      `;
+      userList.appendChild(div);
+    }
+    renderFeed();
   }
 
   function renderFeed() {
     const feedEntries = document.getElementById('feedEntries');
     feedEntries.innerHTML = '';
     const maxEntries = 5;
+
+    // Filter feed to show only entries NOT created by admin (assuming currentUser in entry text is saved)
+    // Since feed entry has .entry string, and admin entries are never added, just display normally
+
     let entriesToShow = feed.slice(0, maxEntries);
 
     for (const entry of entriesToShow) {
-      const div = document.createElement('div');      div.className = 'feed-entry ' + (entry.change > 0 ? 'gain' : (entry.change < 0 ? 'loss' : ''));
+      const div = document.createElement('div');
+      div.className = 'feed-entry ' + (entry.change > 0 ? 'gain' : (entry.change < 0 ? 'loss' : ''));
+      // Insert the entry with bold inside, so use innerHTML
       div.innerHTML = `<time>${entry.timestamp}</time><span>${entry.entry}</span>`;
       feedEntries.appendChild(div);
     }
@@ -566,6 +735,11 @@
       moreDiv.textContent = '...';
       feedEntries.appendChild(moreDiv);
     }
+  }
+
+  function formatDate(date) {
+    const options = { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true };
+    return new Intl.DateTimeFormat('en-US', options).format(date);
   }
 </script>
 
